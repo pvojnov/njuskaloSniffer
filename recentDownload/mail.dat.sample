@@ -1,0 +1,9 @@
+{
+	"from": "user@domain.com",
+	"to": ["user2@differentDomain.com", "user3@differentDomain.com"],
+	"subject": "Email subject",
+	"mailServer": "mailserver.com",
+	"port": 587,
+	"user": "user@domain.com",
+	"pass": "TopSecret"
+}

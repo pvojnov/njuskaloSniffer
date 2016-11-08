@@ -87,35 +87,36 @@ def main():
 
     # send mail with interesting adds
     #################################
-    # get mail info
-    with open(mailData, 'r') as f:
-        mailData = geojson.load(f)
+    if featuresToSend:
+        # get mail info
+        with open(mailData, 'r') as f:
+            mailData = geojson.load(f)
 
-    import smtplib
-    from email.mime.text import MIMEText
+        import smtplib
+        from email.mime.text import MIMEText
 
-    email_template = '<a href="%s">%s</a><br>'
-    msg = MIMEText(
-        '\n'.join([(email_template % (feature['properties']['url'], feature['properties']['title'])) for feature in featuresToSend]),
-        "html", "utf-8"
-    )
-    
-    fromaddr = mailData['from']
-    toaddr = mailData['to']
-    msg['Subject'] = mailData['subject']
-    msg['From'] = fromaddr
-    msg['To'] = ','.join(mailData['to'])
+        email_template = '<a href="%s">%s</a><br>'
+        msg = MIMEText(
+            '\n'.join([(email_template % (feature['properties']['url'], feature['properties']['title'])) for feature in featuresToSend]),
+            "html", "utf-8"
+        )
+        
+        fromaddr = mailData['from']
+        toaddr = mailData['to']
+        msg['Subject'] = mailData['subject']
+        msg['From'] = fromaddr
+        msg['To'] = ','.join(mailData['to'])
 
-    # Send the message via our own SMTP server, but don't include the
-    # envelope header.
-    s = smtplib.SMTP(mailData['mailServer'], mailData['port'])
-    s.ehlo()
-    s.starttls()
-    s.ehlo()
-    s.login(mailData['user'], mailData['pass'])
-    s.sendmail(fromaddr, toaddr, msg.as_string())
+        # Send the message via our own SMTP server, but don't include the
+        # envelope header.
+        s = smtplib.SMTP(mailData['mailServer'], mailData['port'])
+        s.ehlo()
+        s.starttls()
+        s.ehlo()
+        s.login(mailData['user'], mailData['pass'])
+        s.sendmail(fromaddr, toaddr, msg.as_string())
 
-    s.quit()
+        s.quit()
 
 
 
