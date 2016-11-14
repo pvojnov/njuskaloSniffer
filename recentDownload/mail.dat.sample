@@ -1,6 +1,7 @@
 {
 	"from": "user@domain.com",
 	"to": ["user2@differentDomain.com", "user3@differentDomain.com"],
+	"toAdmin": ["ser@domain.com"],
 	"subject": "Email subject",
 	"mailServer": "mailserver.com",
 	"port": 587,

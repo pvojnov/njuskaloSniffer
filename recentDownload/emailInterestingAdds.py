@@ -14,10 +14,12 @@ from shapely.geometry import shape, Point
 def main():
     # param setup
     ######################################
+    sendMailIfNoAdds = True
+    opcineOdInteresa = ['MAKSIMIR', 'GORNJI GRAD', u'MEDVEŠČAK']
     areaOfInterest = '../Data/geom/podrucjeOdInteresa.geojson'
     lastRunInfo = 'lastRun.dat' # last full data dump; last run date
     mailData = 'mail.dat'
-    addUrl = 'http://www.njuskalo.hr/?ctl=browse_ads&sort=new&categoryId=9579&locationId=1153&locationId_level_0=1153&locationId_level_1=0&price[max]=70000&page=%i'
+    addUrl = 'http://www.njuskalo.hr/?ctl=browse_ads&sort=new&categoryId=9579&locationId=1153&locationId_level_0=1153&locationId_level_1=0&price[max]=210000&page=%i'
     tz = pytz.timezone('Europe/Zagreb')
 
     
@@ -76,8 +78,9 @@ def main():
             point = shape(new['geometry'])
             if polygon.contains(point):
                 featuresToSend.append(new)
-        else:
-            featuresToSend.append(new)
+        elif "Grad-Opcina" in new["properties"].keys():
+            if [opcina for opcina in opcineOdInteresa if opcina in new["properties"]["Grad-Opcina"].upper()]:
+                featuresToSend.append(new)
 
 
     
@@ -87,7 +90,7 @@ def main():
 
     # send mail with interesting adds
     #################################
-    if featuresToSend:
+    if featuresToSend or sendMailIfNoAdds:
         # get mail info
         with open(mailData, 'r') as f:
             mailData = geojson.load(f)
@@ -95,17 +98,24 @@ def main():
         import smtplib
         from email.mime.text import MIMEText
 
-        email_template = '<a href="%s">%s</a><br>'
-        msg = MIMEText(
-            '\n'.join([(email_template % (feature['properties']['url'], feature['properties']['title'])) for feature in featuresToSend]),
-            "html", "utf-8"
-        )
+        if featuresToSend:
+            email_template = '<a href="%s">%s</a><br>'
+            msg = MIMEText(
+                '\n'.join([(email_template % (feature['properties']['url'], feature['properties']['title'])) for feature in featuresToSend]),
+                "html", "utf-8"
+            )
+        else:
+            msg = MIMEText('No new ads!\n' + \
+                'newAddsData - %i' % len(newAddsData['features']) + '\n' \
+                'newAddsNotInOld - %i' % len(newAddsNotInOld) + '\n',
+                "plain", "utf-8"
+            )
         
         fromaddr = mailData['from']
-        toaddr = mailData['to']
+        toaddr = mailData['to' if featuresToSend else 'toAdmin']
         msg['Subject'] = mailData['subject']
         msg['From'] = fromaddr
-        msg['To'] = ','.join(mailData['to'])
+        msg['To'] = ','.join(mailData['to' if featuresToSend else 'toAdmin'])
 
         # Send the message via our own SMTP server, but don't include the
         # envelope header.
@@ -117,6 +127,7 @@ def main():
         s.sendmail(fromaddr, toaddr, msg.as_string())
 
         s.quit()
+
 
 
 
