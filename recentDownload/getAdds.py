@@ -24,6 +24,7 @@ import os, shutil
 import time
 import re
 import datetime, iso8601
+import locale
 
 from lxml import html
 import pickle
@@ -262,8 +263,10 @@ def addProcess(response, *args,  **kwargs):
 
         addProperties['mapUrl'] = gMapsUrl[0]
 
-        addProperties['cijenaHRK'] = addDetailsTree.xpath('//strong[@class="price price--hrk"]/text()')[0].strip()
-        addProperties['cijenaEUR'] = addDetailsTree.xpath('//strong[@class="price price--eur"]/text()')[0].strip()
+        locale.setlocale(locale.LC_ALL, '')
+        addProperties['cijenaHRK'] = locale.atof(addDetailsTree.xpath('//strong[@class="price price--hrk"]/text()')[0].strip())
+        addProperties['cijenaEUR'] = locale.atof(addDetailsTree.xpath('//strong[@class="price price--eur"]/text()')[0].strip())
+        locale.setlocale(locale.LC_ALL, (None, None))
 
         addProperties['objavljeno'] = addDetailsTree.xpath('//time/@datetime')[0].strip()
         if iso8601.parse_date(addProperties['objavljeno']) < runToDate:
