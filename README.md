@@ -1,7 +1,7 @@
-"# njuskaloSniffer"
+# njuskaloSniffer
 
 ## Install
-...x-sh
+```sh
 $ pip install virtualenv
 $ pip install virtualenvwrapper
 $ export WORKON_HOME=~/Envs
@@ -15,21 +15,21 @@ $ apt-get install libgeos-dev
 
 
 $ pip install -r requirements.txt
-...
+```
 
 ## Run setup
 
-...x-sh
+```sh
 $ mkvirtualenv njuskalo_sniffer
-& mkdir njuskalo_sniffer
-...
+$ mkdir njuskalo_sniffer
+```
 
 
 
 
 ## Run command
-...x-sh
+```sh
 $ workon njuskalo_sniffer
 $ cd ~/njuskalo_sniffer/njuskalo_kuce/recentDownload
 $ python emailInterestingAdds.py
-...
+```
