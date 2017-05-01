@@ -15,7 +15,7 @@ def main():
     # param setup
     ######################################
     sendMailIfNoAdds = True
-    opcineOdInteresa = ['MAKSIMIR', 'GORNJI GRAD', u'MEDVEŠČAK']
+    opcineOdInteresa = ['MAKSIMIR', 'DONJI GRAD', u'GORNJI GRAD - MEDVEŠČAK']
     areaOfInterest = '../Data/geom/podrucjeOdInteresa.geojson'
     lastRunInfo = 'lastRun.dat' # last full data dump; last run date
     mailData = 'mail.dat'

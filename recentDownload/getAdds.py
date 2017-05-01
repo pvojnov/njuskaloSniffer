@@ -99,7 +99,7 @@ def main(p_url, p_date):
             tree = html.fromstring(pageResponse.content)
 
             # get oglasi
-            oglasi = tree.xpath('//*[@id="form_browse_detailed_search"]/div/div[1]/div[2]/div[4]/ul/li[@class!="EntityList-item--banner"]')
+            oglasi = tree.xpath('//*[@id="form_browse_detailed_search"]/div/div[1]/div[4]/div[4]/ul/li[@class!="EntityList-item--banner"]')
 
             # stop looping through adds if pages are empty
             if not oglasi:
@@ -114,7 +114,7 @@ def main(p_url, p_date):
             addRequestss = []
             oglasData = {}
             for oglas in oglasi:
-                dataAddId = oglas.xpath('@data-ad-id')
+                dataAddId = oglas.xpath('article/h3/a/@name')
                 #print dataAddId
                 if dataAddId:
                     #dataAddId = dataAddId[0]
@@ -263,7 +263,12 @@ def addProcess(response, *args,  **kwargs):
 
         addProperties['mapUrl'] = gMapsUrl[0]
 
-        locale.setlocale(locale.LC_ALL, '')
+        # set locale for price parsing
+        if os.name == 'nt':
+            locale.setlocale(locale.LC_ALL, 'Croatian_Croatia.1250')
+        else:
+            locale.setlocale(locale.LC_ALL, 'hr_HR.utf8')
+            locale._override_localeconv = {'thousands_sep': '.'}
         addProperties['cijenaHRK'] = locale.atof(addDetailsTree.xpath('//strong[@class="price price--hrk"]/text()')[0].strip())
         addProperties['cijenaEUR'] = locale.atof(addDetailsTree.xpath('//strong[@class="price price--eur"]/text()')[0].strip())
         locale.setlocale(locale.LC_ALL, (None, None))
